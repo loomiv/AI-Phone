@@ -86,7 +86,6 @@ export function VoiceCallScreen({ session, character, onEnd, onConnect, initiato
     const [typedText, setTypedText] = useState("");
     const [bgImageResolved, setBgImageResolved] = useState<string | null>(null);
     const [showSttWarning, setShowSttWarning] = useState(false);
-    const [showSubtitles, setShowSubtitles] = useState(true);
 
     const sttRef = useRef<STTSession | null>(null);
     const audioAbortRef = useRef<(() => void) | null>(null);
@@ -736,50 +735,27 @@ export function VoiceCallScreen({ session, character, onEnd, onConnect, initiato
                 </div>
 
                 {/* Subtitle area — top fade via mask */}
-                <div className="relative flex-1 min-h-0 flex flex-col">
-                    {callState !== "CONNECTING" && callState !== "ENDED" && (
-                        <button
-                            type="button"
-                            onClick={() => setShowSubtitles(s => !s)}
-                            aria-label={showSubtitles ? "隐藏聊天文字" : "显示聊天文字"}
-                            title={showSubtitles ? "隐藏聊天文字" : "显示聊天文字"}
-                            className="voicecall-subtitle-toggle"
+                <div
+                    ref={subtitleScrollRef}
+                    className="voicecall-subtitle-mask flex-1 min-h-0 overflow-auto px-5 py-[10px] flex flex-col gap-2 relative"
+                    {...(inputMode === "text" && callState !== "CONNECTING" && callState !== "ENDED" ? { "data-text-input": "" } : {})}
+                >
+                    {subtitles.map((sub) => (
+                        <div
+                            key={sub.id}
+                            className="call-subtitle"
+                            data-role={sub.role}
                         >
-                            {showSubtitles ? (
-                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M3 11l18-5v12L3 13v-2z" />
-                                </svg>
-                            ) : (
-                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M3 11l18-5v12L3 13v-2z" />
-                                    <line x1="2" y1="2" x2="22" y2="22" />
-                                </svg>
-                            )}
-                        </button>
-                    )}
-                    <div
-                        ref={subtitleScrollRef}
-                        className="voicecall-subtitle-mask flex-1 min-h-0 overflow-auto px-5 py-[10px] flex flex-col gap-2 relative"
-                        style={showSubtitles ? undefined : { visibility: "hidden", pointerEvents: "none" }}
-                        {...(inputMode === "text" && callState !== "CONNECTING" && callState !== "ENDED" ? { "data-text-input": "" } : {})}
-                    >
-                        {subtitles.map((sub) => (
-                            <div
-                                key={sub.id}
-                                className="call-subtitle"
-                                data-role={sub.role}
-                            >
-                                <BilingualTextBlock text={sub.text} mode="plain" className="call-subtitle-bilingual" defaultExpanded={session.collapseBilingualTranslation !== false ? false : true} />
-                            </div>
-                        ))}
+                            <BilingualTextBlock text={sub.text} mode="plain" className="call-subtitle-bilingual" defaultExpanded={session.collapseBilingualTranslation !== false ? false : true} />
+                        </div>
+                    ))}
 
-                        {/* Interim STT text */}
-                        {interimText && callState === "USER_SPEAKING" && (
-                            <div className="call-subtitle" data-interim="">
-                                {interimText}
-                            </div>
-                        )}
-                    </div>
+                    {/* Interim STT text */}
+                    {interimText && callState === "USER_SPEAKING" && (
+                        <div className="call-subtitle" data-interim="">
+                            {interimText}
+                        </div>
+                    )}
                 </div>
 
                 {inputMode === "text" && callState !== "CONNECTING" && callState !== "ENDED" && (

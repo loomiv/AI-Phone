@@ -5009,32 +5009,6 @@
 .voicecall-subtitle-mask > :first-child {
   margin-top: auto;
 }
-/* 隐藏/显示通话文字开关：字幕区右上角悬浮，不参与字幕消息流布局 */
-.voicecall-subtitle-toggle {
-  position: absolute;
-  top: 6px;
-  right: 8px;
-  z-index: 6;
-  width: 30px;
-  height: 30px;
-  border: 0;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.30);
-  color: #fff;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  cursor: pointer;
-  touch-action: manipulation;
-  opacity: 0.66;
-  transition: opacity 0.15s ease, background 0.15s ease;
-}
-.voicecall-subtitle-toggle:active {
-  opacity: 1;
-  background: rgba(0, 0, 0, 0.48);
-}
 /* In text-input mode the input bar floats over the bottom of this area; reserve
    space so the newest message isn't hidden behind it. */
 .voicecall-subtitle-mask[data-text-input] {
