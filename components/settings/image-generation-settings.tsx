@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState, type CSSProperties } from "react";
-import { AlertCircle, Camera, ChevronDown, Image, Info, Plus, RefreshCw, Sparkles, Trash2, Upload } from "lucide-react";
+import { AlertCircle, Camera, Check, ChevronDown, Image, Info, Plus, RefreshCw, Sparkles, Trash2, Upload } from "lucide-react";
 import type { ImageGenerationSettings as ImageGenerationSettingsType, NovelAiPreset, OpenAiImagePreset } from "@/lib/settings-types";
 import {
     DEFAULT_IMAGE_GENERATION_SETTINGS,
@@ -301,6 +301,13 @@ export function ImageGenerationSettings() {
         } finally {
             setIsTesting(false);
         }
+    };
+
+    const saveSettings = () => {
+        // 显式保存：把当前界面状态整包落库（各字段 onBlur/onChange 虽已即时写，
+        // 这里再兜底一次，并给出明确的保存成功反馈，避免"改了却以为没存"的困惑）。
+        persist(settings);
+        setStatus({ success: true, message: "已保存生图配置。" });
     };
 
     const uploadReference = async (characterId: string, file: File) => {
@@ -732,6 +739,14 @@ export function ImageGenerationSettings() {
                 )}
 
                 <div className="flex gap-3">
+                    <button
+                        type="button"
+                        onClick={saveSettings}
+                        className="ui-btn ui-btn-primary flex-1"
+                    >
+                        <Check size={16} />
+                        保存配置
+                    </button>
                     <button
                         type="button"
                         onClick={testGeneration}
